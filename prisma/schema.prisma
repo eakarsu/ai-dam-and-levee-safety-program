@@ -1,0 +1,356 @@
+// Generated schema — modeled after beautyhqio conventions.
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  active       Boolean @default(true)
+  id           String   @id @default(cuid())
+  email        String   @unique
+  name         String
+  passwordHash String
+  role         Role     @default(ANALYST)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+enum Role {
+  ADMIN
+  MANAGER
+  ANALYST
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  actorId   String?
+  actorName String?
+  action    String
+  entity    String
+  entityId  String?
+  detail    String?
+  createdAt DateTime @default(now())
+}
+
+model WorkflowAnalysis {
+ id String @id @default(cuid())
+ actorId String
+ workflow String
+ subjectEntity String
+ subjectId String
+ input Json
+ evidence Json
+ evidenceHash String
+ result Json
+ model String
+ receipt String?
+ createdAt DateTime @default(now())
+ @@index([workflow, createdAt])
+}
+model RecordReview {
+ id String @id @default(cuid())
+ actorId String
+ entity String
+ entityId String
+ version String
+ reason String
+ createdAt DateTime @default(now())
+ @@unique([entity, entityId, version, actorId])
+}
+model UsageBucket {
+ id String @id
+ calls Int
+}
+model IssuedCredential {
+ token String @id
+ entity String
+ entityId String
+ version String
+ assertion Json
+ createdAt DateTime @default(now())
+ revokedAt DateTime?
+ @@index([entity, entityId, createdAt])
+}
+
+model DomainArtifact {
+ id String @id @default(cuid())
+ subjectEntity String
+ subjectId String
+ title String
+ content String
+ contentHash String
+ actorId String
+ approvedBy String?
+ createdAt DateTime @default(now())
+ @@index([subjectEntity, subjectId])
+}
+
+model RecordApproval {
+ id String @id
+ version String
+}
+model DomainExecution {
+ id String @id
+ actorId String
+ connectorId String
+ action String
+ subjectEntity String
+ subjectId String
+ version String
+ status String
+ result Json?
+ createdAt DateTime @default(now())
+}
+
+model WorkSession {
+ id String @id @default(cuid())
+ actorId String
+ respondentId String
+ subjectEntity String
+ subjectId String
+ questions Json
+ answers Json
+ currentQuestion String?
+ status String
+ deadline DateTime
+ createdAt DateTime @default(now())
+ @@index([respondentId, createdAt])
+}
+model SessionMedia {
+ id String @id @default(cuid())
+ sessionId String
+ questionId String
+ actorId String
+ contentType String
+ bytes Bytes
+ contentHash String
+ createdAt DateTime @default(now())
+ @@index([sessionId])
+}
+
+model AppSetting {
+ id String @id
+ value Json
+ updatedAt DateTime @updatedAt
+}
+
+model SafetyAsset {
+ id String @id @default(cuid())
+ name String
+ assetNumber String
+ assetType String
+ owner String
+ location String
+ inspectionDueAt DateTime
+ status String @default("Draft")
+ createdAt DateTime @default(now())
+ updatedAt DateTime @updatedAt
+ @@index([createdAt])
+ inverseEngineeringInspection_safetyAssetId EngineeringInspection[] @relation("EngineeringInspection_safetyAssetId")
+ inverseInstrument_safetyAssetId Instrument[] @relation("Instrument_safetyAssetId")
+ inverseInstrumentReading_safetyAssetId InstrumentReading[] @relation("InstrumentReading_safetyAssetId")
+ inverseActionThreshold_safetyAssetId ActionThreshold[] @relation("ActionThreshold_safetyAssetId")
+ inverseCorrectiveAction_safetyAssetId CorrectiveAction[] @relation("CorrectiveAction_safetyAssetId")
+ inverseEmergencyPlan_safetyAssetId EmergencyPlan[] @relation("EmergencyPlan_safetyAssetId")
+ inverseEmergencyExercise_safetyAssetId EmergencyExercise[] @relation("EmergencyExercise_safetyAssetId")
+ inverseAssetMaintenance_safetyAssetId AssetMaintenance[] @relation("AssetMaintenance_safetyAssetId")
+ inverseOperationalTask_safetyAssetId OperationalTask[] @relation("OperationalTask_safetyAssetId")
+ inverseRuleVersion_safetyAssetId RuleVersion[] @relation("RuleVersion_safetyAssetId")
+ inverseDocumentRequirement_safetyAssetId DocumentRequirement[] @relation("DocumentRequirement_safetyAssetId")
+}
+
+model EngineeringInspection {
+ id String @id @default(cuid())
+ title String
+ inspectedAt DateTime
+ engineer String
+ observations String
+ severity String
+ nextDueAt DateTime
+ status String @default("Draft")
+ safetyAssetId String
+ createdAt DateTime @default(now())
+ updatedAt DateTime @updatedAt
+ @@index([createdAt])
+ @@index([safetyAssetId])
+ linkedSafetyAssetId SafetyAsset @relation("EngineeringInspection_safetyAssetId", fields: [safetyAssetId], references: [id], onDelete: Restrict)
+}
+
+model Instrument {
+ id String @id @default(cuid())
+ name String
+ instrumentCode String
+ location String
+ measurementUnit String
+ commissionedAt DateTime
+ status String @default("Draft")
+ safetyAssetId String
+ createdAt DateTime @default(now())
+ updatedAt DateTime @updatedAt
+ @@index([createdAt])
+ @@index([safetyAssetId])
+ linkedSafetyAssetId SafetyAsset @relation("Instrument_safetyAssetId", fields: [safetyAssetId], references: [id], onDelete: Restrict)
+ inverseInstrumentReading_instrumentId InstrumentReading[] @relation("InstrumentReading_instrumentId")
+ inverseActionThreshold_instrumentId ActionThreshold[] @relation("ActionThreshold_instrumentId")
+}
+
+model InstrumentReading {
+ id String @id @default(cuid())
+ title String
+ instrumentId String
+ measuredAt DateTime
+ value Float
+ observer String
+ conditionNotes String
+ status String @default("Draft")
+ safetyAssetId String
+ createdAt DateTime @default(now())
+ updatedAt DateTime @updatedAt
+ @@index([createdAt])
+ @@index([safetyAssetId])
+ linkedInstrumentId Instrument @relation("InstrumentReading_instrumentId", fields: [instrumentId], references: [id], onDelete: Restrict)
+ linkedSafetyAssetId SafetyAsset @relation("InstrumentReading_safetyAssetId", fields: [safetyAssetId], references: [id], onDelete: Restrict)
+}
+
+model ActionThreshold {
+ id String @id @default(cuid())
+ title String
+ instrumentId String
+ lower Float
+ upper Float
+ ruleVersion String
+ engineerReference String
+ status String @default("Draft")
+ safetyAssetId String
+ createdAt DateTime @default(now())
+ updatedAt DateTime @updatedAt
+ @@index([createdAt])
+ @@index([safetyAssetId])
+ linkedInstrumentId Instrument @relation("ActionThreshold_instrumentId", fields: [instrumentId], references: [id], onDelete: Restrict)
+ linkedSafetyAssetId SafetyAsset @relation("ActionThreshold_safetyAssetId", fields: [safetyAssetId], references: [id], onDelete: Restrict)
+}
+
+model CorrectiveAction {
+ id String @id @default(cuid())
+ title String
+ finding String
+ owner String
+ dueAt DateTime
+ action String
+ evidence String?
+ status String @default("Draft")
+ safetyAssetId String
+ createdAt DateTime @default(now())
+ updatedAt DateTime @updatedAt
+ @@index([createdAt])
+ @@index([safetyAssetId])
+ linkedSafetyAssetId SafetyAsset @relation("CorrectiveAction_safetyAssetId", fields: [safetyAssetId], references: [id], onDelete: Restrict)
+}
+
+model EmergencyPlan {
+ id String @id @default(cuid())
+ title String
+ version String
+ adoptedAt DateTime
+ contacts String
+ activationInstructions String
+ exerciseDueAt DateTime
+ status String @default("Draft")
+ safetyAssetId String
+ createdAt DateTime @default(now())
+ updatedAt DateTime @updatedAt
+ @@index([createdAt])
+ @@index([safetyAssetId])
+ linkedSafetyAssetId SafetyAsset @relation("EmergencyPlan_safetyAssetId", fields: [safetyAssetId], references: [id], onDelete: Restrict)
+}
+
+model EmergencyExercise {
+ id String @id @default(cuid())
+ title String
+ exercisedAt DateTime
+ coordinator String
+ scenario String
+ lessons String
+ correctiveActions String
+ status String @default("Draft")
+ safetyAssetId String
+ createdAt DateTime @default(now())
+ updatedAt DateTime @updatedAt
+ @@index([createdAt])
+ @@index([safetyAssetId])
+ linkedSafetyAssetId SafetyAsset @relation("EmergencyExercise_safetyAssetId", fields: [safetyAssetId], references: [id], onDelete: Restrict)
+}
+
+model AssetMaintenance {
+ id String @id @default(cuid())
+ title String
+ equipment String
+ servicedAt DateTime
+ contractor String
+ workDescription String
+ receipt String?
+ status String @default("Draft")
+ safetyAssetId String
+ createdAt DateTime @default(now())
+ updatedAt DateTime @updatedAt
+ @@index([createdAt])
+ @@index([safetyAssetId])
+ linkedSafetyAssetId SafetyAsset @relation("AssetMaintenance_safetyAssetId", fields: [safetyAssetId], references: [id], onDelete: Restrict)
+}
+
+model OperationalTask {
+ id String @id @default(cuid())
+ title String
+ owner String
+ priority String
+ startAt DateTime
+ dueAt DateTime
+ done Boolean
+ notes String?
+ status String @default("Draft")
+ safetyAssetId String
+ createdAt DateTime @default(now())
+ updatedAt DateTime @updatedAt
+ @@index([createdAt])
+ @@index([safetyAssetId])
+ linkedSafetyAssetId SafetyAsset @relation("OperationalTask_safetyAssetId", fields: [safetyAssetId], references: [id], onDelete: Restrict)
+}
+
+model RuleVersion {
+ id String @id @default(cuid())
+ title String
+ jurisdiction String
+ version String
+ effectiveAt DateTime
+ expiresAt DateTime?
+ sourceUrl String
+ requirementText String
+ status String @default("Draft")
+ safetyAssetId String
+ createdAt DateTime @default(now())
+ updatedAt DateTime @updatedAt
+ @@index([createdAt])
+ @@index([safetyAssetId])
+ linkedSafetyAssetId SafetyAsset @relation("RuleVersion_safetyAssetId", fields: [safetyAssetId], references: [id], onDelete: Restrict)
+}
+
+model DocumentRequirement {
+ id String @id @default(cuid())
+ title String
+ category String
+ requiredBy DateTime
+ sourceReference String
+ evidenceReference String?
+ reviewNotes String?
+ status String @default("Draft")
+ safetyAssetId String
+ createdAt DateTime @default(now())
+ updatedAt DateTime @updatedAt
+ @@index([createdAt])
+ @@index([safetyAssetId])
+ linkedSafetyAssetId SafetyAsset @relation("DocumentRequirement_safetyAssetId", fields: [safetyAssetId], references: [id], onDelete: Restrict)
+}

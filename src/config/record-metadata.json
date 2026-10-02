@@ -1,0 +1,602 @@
+{
+  "SafetyAsset": {
+    "name": "SafetyAsset",
+    "fields": [
+      {
+        "name": "name",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "assetNumber",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "assetType",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "owner",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "location",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "inspectionDueAt",
+        "kind": "date",
+        "required": true
+      },
+      {
+        "name": "status",
+        "kind": "string",
+        "required": true
+      }
+    ]
+  },
+  "EngineeringInspection": {
+    "name": "EngineeringInspection",
+    "fields": [
+      {
+        "name": "title",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "inspectedAt",
+        "kind": "date",
+        "required": true
+      },
+      {
+        "name": "engineer",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "observations",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "severity",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "nextDueAt",
+        "kind": "date",
+        "required": true
+      },
+      {
+        "name": "status",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "safetyAssetId",
+        "kind": "string",
+        "required": true,
+        "relation": "SafetyAsset"
+      }
+    ],
+    "parent": {
+      "entity": "SafetyAsset",
+      "field": "safetyAssetId"
+    }
+  },
+  "Instrument": {
+    "name": "Instrument",
+    "fields": [
+      {
+        "name": "name",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "instrumentCode",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "location",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "measurementUnit",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "commissionedAt",
+        "kind": "date",
+        "required": true
+      },
+      {
+        "name": "status",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "safetyAssetId",
+        "kind": "string",
+        "required": true,
+        "relation": "SafetyAsset"
+      }
+    ],
+    "parent": {
+      "entity": "SafetyAsset",
+      "field": "safetyAssetId"
+    }
+  },
+  "InstrumentReading": {
+    "name": "InstrumentReading",
+    "fields": [
+      {
+        "name": "title",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "instrumentId",
+        "kind": "string",
+        "required": true,
+        "relation": "Instrument"
+      },
+      {
+        "name": "measuredAt",
+        "kind": "date",
+        "required": true
+      },
+      {
+        "name": "value",
+        "kind": "number",
+        "required": true,
+        "min": 0
+      },
+      {
+        "name": "observer",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "conditionNotes",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "status",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "safetyAssetId",
+        "kind": "string",
+        "required": true,
+        "relation": "SafetyAsset"
+      }
+    ],
+    "parent": {
+      "entity": "SafetyAsset",
+      "field": "safetyAssetId"
+    }
+  },
+  "ActionThreshold": {
+    "name": "ActionThreshold",
+    "fields": [
+      {
+        "name": "title",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "instrumentId",
+        "kind": "string",
+        "required": true,
+        "relation": "Instrument"
+      },
+      {
+        "name": "lower",
+        "kind": "number",
+        "required": true,
+        "min": 0
+      },
+      {
+        "name": "upper",
+        "kind": "number",
+        "required": true,
+        "min": 0
+      },
+      {
+        "name": "ruleVersion",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "engineerReference",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "status",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "safetyAssetId",
+        "kind": "string",
+        "required": true,
+        "relation": "SafetyAsset"
+      }
+    ],
+    "parent": {
+      "entity": "SafetyAsset",
+      "field": "safetyAssetId"
+    }
+  },
+  "CorrectiveAction": {
+    "name": "CorrectiveAction",
+    "fields": [
+      {
+        "name": "title",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "finding",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "owner",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "dueAt",
+        "kind": "date",
+        "required": true
+      },
+      {
+        "name": "action",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "evidence",
+        "kind": "string",
+        "required": false
+      },
+      {
+        "name": "status",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "safetyAssetId",
+        "kind": "string",
+        "required": true,
+        "relation": "SafetyAsset"
+      }
+    ],
+    "parent": {
+      "entity": "SafetyAsset",
+      "field": "safetyAssetId"
+    }
+  },
+  "EmergencyPlan": {
+    "name": "EmergencyPlan",
+    "fields": [
+      {
+        "name": "title",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "version",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "adoptedAt",
+        "kind": "date",
+        "required": true
+      },
+      {
+        "name": "contacts",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "activationInstructions",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "exerciseDueAt",
+        "kind": "date",
+        "required": true
+      },
+      {
+        "name": "status",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "safetyAssetId",
+        "kind": "string",
+        "required": true,
+        "relation": "SafetyAsset"
+      }
+    ],
+    "parent": {
+      "entity": "SafetyAsset",
+      "field": "safetyAssetId"
+    }
+  },
+  "EmergencyExercise": {
+    "name": "EmergencyExercise",
+    "fields": [
+      {
+        "name": "title",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "exercisedAt",
+        "kind": "date",
+        "required": true
+      },
+      {
+        "name": "coordinator",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "scenario",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "lessons",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "correctiveActions",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "status",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "safetyAssetId",
+        "kind": "string",
+        "required": true,
+        "relation": "SafetyAsset"
+      }
+    ],
+    "parent": {
+      "entity": "SafetyAsset",
+      "field": "safetyAssetId"
+    }
+  },
+  "AssetMaintenance": {
+    "name": "AssetMaintenance",
+    "fields": [
+      {
+        "name": "title",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "equipment",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "servicedAt",
+        "kind": "date",
+        "required": true
+      },
+      {
+        "name": "contractor",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "workDescription",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "receipt",
+        "kind": "string",
+        "required": false
+      },
+      {
+        "name": "status",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "safetyAssetId",
+        "kind": "string",
+        "required": true,
+        "relation": "SafetyAsset"
+      }
+    ],
+    "parent": {
+      "entity": "SafetyAsset",
+      "field": "safetyAssetId"
+    }
+  },
+  "OperationalTask": {
+    "name": "OperationalTask",
+    "fields": [
+      {
+        "name": "title",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "owner",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "priority",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "startAt",
+        "kind": "date",
+        "required": true
+      },
+      {
+        "name": "dueAt",
+        "kind": "date",
+        "required": true
+      },
+      {
+        "name": "done",
+        "kind": "boolean",
+        "required": true
+      },
+      {
+        "name": "notes",
+        "kind": "string",
+        "required": false
+      },
+      {
+        "name": "status",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "safetyAssetId",
+        "kind": "string",
+        "required": true,
+        "relation": "SafetyAsset"
+      }
+    ],
+    "parent": {
+      "entity": "SafetyAsset",
+      "field": "safetyAssetId"
+    }
+  },
+  "RuleVersion": {
+    "name": "RuleVersion",
+    "fields": [
+      {
+        "name": "title",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "jurisdiction",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "version",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "effectiveAt",
+        "kind": "date",
+        "required": true
+      },
+      {
+        "name": "expiresAt",
+        "kind": "date",
+        "required": false
+      },
+      {
+        "name": "sourceUrl",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "requirementText",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "status",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "safetyAssetId",
+        "kind": "string",
+        "required": true,
+        "relation": "SafetyAsset"
+      }
+    ],
+    "parent": {
+      "entity": "SafetyAsset",
+      "field": "safetyAssetId"
+    }
+  },
+  "DocumentRequirement": {
+    "name": "DocumentRequirement",
+    "fields": [
+      {
+        "name": "title",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "category",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "requiredBy",
+        "kind": "date",
+        "required": true
+      },
+      {
+        "name": "sourceReference",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "evidenceReference",
+        "kind": "string",
+        "required": false
+      },
+      {
+        "name": "reviewNotes",
+        "kind": "string",
+        "required": false
+      },
+      {
+        "name": "status",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "safetyAssetId",
+        "kind": "string",
+        "required": true,
+        "relation": "SafetyAsset"
+      }
+    ],
+    "parent": {
+      "entity": "SafetyAsset",
+      "field": "safetyAssetId"
+    }
+  }
+}
